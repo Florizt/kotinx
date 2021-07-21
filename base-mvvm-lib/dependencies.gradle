@@ -1,0 +1,37 @@
+dependencies {
+    api rootProject.ext.dependencies.appcompat
+    api rootProject.ext.dependencies.recyclerview
+    api rootProject.ext.dependencies.constraintlayout
+    api rootProject.ext.dependencies.coreKtx
+
+    api rootProject.ext.dependencies.lifecycle
+    annotationProcessor rootProject.ext.dependencies.lifecycleCompiler
+    //    api rootProject.ext.dependencies.lifecycleScope
+    api rootProject.ext.dependencies.viewModelScope
+
+    api rootProject.ext.dependencies.kotlin
+    api rootProject.ext.dependencies.kotlinReflect
+
+    api rootProject.ext.dependencies.koin
+    api rootProject.ext.dependencies.koinViewmodel
+
+    api rootProject.ext.dependencies.coroutines
+    api rootProject.ext.dependencies.coroutinesAndroid
+
+    api rootProject.ext.dependencies.retrofit
+    api rootProject.ext.dependencies.retrofitConverterGson
+    api rootProject.ext.dependencies.retrofitCoroutinesAdapter
+
+    api rootProject.ext.dependencies.okhttp
+    api rootProject.ext.dependencies.okhttpLoggingInterceptor
+    api rootProject.ext.dependencies.okhttpUrlconnection
+
+    kapt rootProject.ext.dependencies.databindingCompiler
+
+    api rootProject.ext.dependencies.glide
+    annotationProcessor rootProject.ext.dependencies.glideCompiler
+}
+
+kapt {
+    generateStubs = true
+}

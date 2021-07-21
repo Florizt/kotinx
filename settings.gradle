@@ -1,0 +1,3 @@
+rootProject.name='kotinx'
+include ':app'
+include ':base-mvvm-lib'

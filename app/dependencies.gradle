@@ -1,0 +1,8 @@
+dependencies{
+    kapt rootProject.ext.dependencies.databindingCompiler
+    implementation project(":base-mvvm-lib")
+}
+
+kapt {
+    generateStubs = true
+}
