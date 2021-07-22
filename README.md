@@ -1,4 +1,5 @@
 ```
+架构模式：
                             base
                                 UI -> BaseActivity<V : ViewDataBinding, VM : BaseViewModel>
                                  ↑    ↓
@@ -76,5 +77,38 @@ DataBinding 示例：ObservableField ↑    ↓
                             ext
 
 ```
+---
+
+```
+生命周期扩展：
+如应用需要实现统计、推送、埋点等第三方，需要在BaseActivity的生命周期里进行注册或者初始化的，
+为了功能隔离，现在通过AOP将BaseActivity生命周期对外开放出来。更多生命周期见：ActivityLifeCycle
+内部已通过此AOP思想，用ImmersionBar实现沉浸式状态栏、底部导航栏和软键盘等的处理，具体可见：BarAspect。
+
+自定义示例：StatisticAspect
+1、业务module的build.gradle里新增：
+    apply plugin: 'android-aspectjx'
+
+    android {
+        aspectjx {
+            enabled true
+            exclude 'com.google','com.squareup','com.alipay','org.apache'
+        }
+    }
+
+2、
+  @Aspect
+  open class StatisticAspect {
+      @Before(onActivityCreate)
+      open fun statisticAspect(joinPoint: JoinPoint){
+          // ...
+      }
+  }
+
+同理，BaseViewModel生命周期一样开放出来，见：ViewModelLifeCycle，具体实现参考上面，
+内部已通过此AOP思想，用EventBus实现事件总线，具体可见：EventBusAspect
+```
+
+
 
 

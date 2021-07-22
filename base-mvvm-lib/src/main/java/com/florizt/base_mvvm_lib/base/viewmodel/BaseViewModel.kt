@@ -4,7 +4,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import com.florizt.base_mvvm_lib.base.BaseContract
+import com.florizt.base_mvvm_lib.base.repository.datasource.MessageEvent
 import com.florizt.base_mvvm_lib.base.repository.datasource.SingleLiveData
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 
 /**
@@ -47,6 +50,12 @@ abstract class BaseViewModel : ViewModel(), BaseContract.IViewModel {
             return liveData
         }
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    open fun onMessageEvent(event: MessageEvent?) {
+
+    }
+
 
     override fun onAny(owner: LifecycleOwner?, event: Lifecycle.Event?) {
     }

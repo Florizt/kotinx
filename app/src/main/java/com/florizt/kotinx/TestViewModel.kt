@@ -2,11 +2,12 @@ package com.florizt.kotinx
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import com.florizt.base_mvvm_lib.base.repository.datasource.MessageEvent
 import com.florizt.base_mvvm_lib.base.repository.datasource.SingleLiveData
 import com.florizt.base_mvvm_lib.base.viewmodel.BaseViewModel
 import com.florizt.base_mvvm_lib.ext.launchUI
 import com.florizt.base_mvvm_lib.ext.launchWithUI
-import kotlinx.coroutines.delay
+import org.greenrobot.eventbus.EventBus
 
 /**
  * Created by wuwei
@@ -19,43 +20,32 @@ class TestViewModel(private val testRepository: TestRepository) : BaseViewModel(
         println("onAny $owner---$event")
     }
 
-    val test: SingleLiveData<String> = SingleLiveData()
+    val test: SingleLiveData<String> = SingleLiveData("xxx")
+
 
     override fun onCreate() {
+        super.onCreate()
         println("onCreate")
         launchUI {
             //            launchWithIO { testRepository.getTest() }
 
             launchWithUI { }
 
-            delay(2000)
-            test.value = "xxx"
-
             val testItemViewModel = TestItemViewModel(this@TestViewModel)
         }
     }
 
-    fun adapterTest() = {
-
-    }
-
     override fun onDestroy() {
-        println("onDestroy")
+        super.onDestroy()
     }
 
-    override fun onStart() {
-        println("onStart")
+    fun adapterTest() = {
+        println("====aspectj=111======")
+        EventBus.getDefault().post(MessageEvent(1, 0))
     }
 
-    override fun onStop() {
-        println("onStop")
+    override fun onMessageEvent(event: MessageEvent?) {
+        println("MessageEvent>>>>>>=====$event==========")
     }
 
-    override fun onResume() {
-        println("onResume")
-    }
-
-    override fun onPause() {
-        println("onPause")
-    }
 }

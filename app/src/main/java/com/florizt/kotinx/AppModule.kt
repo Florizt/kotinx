@@ -1,8 +1,6 @@
 package com.florizt.kotinx
 
-import com.florizt.base_mvvm_lib.base.repository.datasource.locate.LocalfitFactory
 import com.florizt.base_mvvm_lib.base.repository.datasource.remote.RetrofitFactory
-import org.koin.android.ext.koin.androidApplication
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -20,12 +18,12 @@ val repositoryModule = module {
 }
 
 val modelModule = module {
-    single { TestModel(get(), get()) }
+    single { TestModel(get()) }
 }
 
 val serviceModule = module {
     single { RetrofitFactory.getService(ITestRemoteService::class.java) }
-    single { LocalfitFactory.getService(androidApplication(), ITestLocalService::class.java) }
+//    single { LocalfitFactory.getService(androidContext(), ITestLocalService::class.java) }
 }
 
 val allModule = listOf(

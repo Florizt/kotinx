@@ -1,9 +1,5 @@
 package com.florizt.base_mvvm_lib.base.repository.datasource.remote
 
-import android.annotation.SuppressLint
-import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
-
 /**
  * Created by wuwei
  * 2021/7/19

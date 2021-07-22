@@ -30,6 +30,10 @@ dependencies {
 
     api rootProject.ext.dependencies.glide
     annotationProcessor rootProject.ext.dependencies.glideCompiler
+
+    api rootProject.ext.dependencies.immersionbar
+
+    api rootProject.ext.dependencies.eventbus
 }
 
 kapt {

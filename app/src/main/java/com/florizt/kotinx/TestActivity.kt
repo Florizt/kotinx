@@ -20,9 +20,6 @@ class TestActivity : BaseActivity<ActivityMainBinding, TestViewModel>() {
         return BR.viewModel
     }
 
-    override fun initParam() {
-    }
-
     override fun initView(savedInstanceState: Bundle?) {
     }
 

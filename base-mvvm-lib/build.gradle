@@ -3,6 +3,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
+apply plugin: 'android-aspectjx'
+
 apply from: project.file('dependencies.gradle')
 
 android {
@@ -18,11 +20,19 @@ android {
         consumerProguardFiles 'consumer-rules.pro'
     }
 
-    dataBinding{
+    //开启dataBinding
+    dataBinding {
         enabled true
     }
 
+    //开启kotlin实验功能，如：@Parcelize
     androidExtensions {
         experimental = true
+    }
+
+    //解决aspectjx兼容问题
+    aspectjx {
+        enabled true
+        exclude 'com.google', 'com.squareup', 'com.alipay', 'org.apache'
     }
 }

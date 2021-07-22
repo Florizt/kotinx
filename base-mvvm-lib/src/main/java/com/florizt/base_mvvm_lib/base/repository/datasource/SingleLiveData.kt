@@ -13,8 +13,12 @@ import java.util.concurrent.atomic.AtomicBoolean
  * 2021/7/16
  * 佛祖保佑       永无BUG
  */
-open class SingleLiveData<T> : MutableLiveData<T>() {
+open class SingleLiveData<T> : MutableLiveData<T> {
     private val TAG = "SingleLiveEvent"
+
+    constructor()
+
+    constructor(v: T) : super(v)
 
     private val pending: AtomicBoolean = AtomicBoolean(false)
 

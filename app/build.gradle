@@ -3,8 +3,9 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
+apply plugin: 'android-aspectjx'
+
 apply from: project.file('sign.gradle')
-apply from: project.file('dependencies.gradle')
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
@@ -25,4 +26,18 @@ android {
     androidExtensions {
         experimental = true
     }
+
+    aspectjx {
+        enabled true
+        exclude 'com.google','com.squareup','com.alipay','org.apache'
+    }
+}
+
+kapt {
+    generateStubs = true
+}
+
+dependencies{
+    kapt rootProject.ext.dependencies.databindingCompiler
+    implementation project(":base-mvvm-lib")
 }

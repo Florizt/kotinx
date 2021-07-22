@@ -1,5 +1,6 @@
 package com.florizt.base_mvvm_lib.base.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -20,11 +21,11 @@ import kotlin.reflect.KClass
  * 佛祖保佑       永无BUG
  */
 abstract class BaseActivity<V : ViewDataBinding, VM : BaseViewModel> :
-    AppCompatActivity(), BaseContract.IView {
+    AppCompatActivity(), BaseContract.IView, BaseContract.IWindow, BaseContract.IBar {
 
-    protected val activity: AppCompatActivity? = this@BaseActivity
-    protected var binding: V? = null
-    protected var viewModel: VM? = null
+    protected val activity: AppCompatActivity = this@BaseActivity
+    protected lateinit var binding: V
+    protected lateinit var viewModel: VM
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,63 +37,94 @@ abstract class BaseActivity<V : ViewDataBinding, VM : BaseViewModel> :
         initViewObservable()
     }
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+    }
 
-            return false
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onStart() {
+        super.onStart()
+    }
+
+    override fun onResume() {
+        super.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.unbind()
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        return if (keyCode == KeyEvent.KEYCODE_BACK && interceptKeyBack()) {
+            defaultOpera(activity, keyCode, event)
+            false
         } else {
-            return super.onKeyDown(keyCode, event)
+            super.onKeyDown(keyCode, event)
         }
     }
 
     private fun initDatabindingAndViewModel() {
-        binding = DataBindingUtil.inflate<V>(
+        binding = DataBindingUtil.inflate(
             LayoutInflater.from(activity), initLayoutId(), null, false
         )
-        setContentView((binding as V).root)
+        setContentView(binding.root)
 
-        if (viewModel == null) {
-            // 传统写法：
-            /* var clazz: Class<VM>? = null
-             val genericSuperclass = javaClass.genericSuperclass;
-             if (genericSuperclass is ParameterizedType) {
-                 clazz = genericSuperclass?.actualTypeArguments[1] as Class<VM>?
-             }
-             if (clazz == null) {
-                 clazz = BaseViewModel::class.java as Class<VM>?
-             }
-             viewModel = clazz?.let { ViewModelProviders.of(this).get(it) }*/
+        // 传统写法：
+        /* var clazz: Class<VM>? = null
+         val genericSuperclass = javaClass.genericSuperclass;
+         if (genericSuperclass is ParameterizedType) {
+             clazz = genericSuperclass?.actualTypeArguments[1] as Class<VM>?
+         }
+         if (clazz == null) {
+             clazz = BaseViewModel::class.java as Class<VM>?
+         }
+         viewModel = clazz?.let { ViewModelProviders.of(this).get(it) }*/
 
-            // koin写法，需要 kotlin-reflect 和 koin
-            val clazzs =
-                javaClass.kotlin.supertypes[0].arguments[1].type!!.classifier!! as KClass<VM>
-            viewModel = getViewModel(clazzs)
-        }
+        // koin写法，需要 kotlin-reflect 和 koin
+        val clazzs =
+            javaClass.kotlin.supertypes[0].arguments[1].type!!.classifier!! as KClass<VM>
+        viewModel = getViewModel(clazzs)
 
         // databinding绑定viewModel，不然xml用不了viewModel
-        viewModel?.let { binding?.setVariable(initVariableId(), it) }
+        binding.setVariable(initVariableId(), viewModel)
 
         // databinding绑定livedata，不然xml收不到数据改变通知，也可以直接使用DataBinding的ObservableField
-        binding?.lifecycleOwner = this
+        binding.lifecycleOwner = this
 
         // viewModel绑定lifecycle，不然viewModel没有Activity生命周期
-        viewModel?.let { lifecycle.addObserver(it) }
+        lifecycle.addObserver(viewModel)
     }
 
     private fun registorUIChangeLiveDataCallBack() {
-        viewModel?.uc?.getShowDialogEvent()?.observed(this, Observer<Nothing?> {
+        viewModel.uc.getShowDialogEvent()?.observed(this, Observer<Nothing?> {
 
         })
 
-        viewModel?.uc?.getDismissDialogEvent()?.observed(this, Observer<Nothing?> {
+        viewModel.uc.getDismissDialogEvent()?.observed(this, Observer<Nothing?> {
 
         })
 
-        viewModel?.uc?.getHideSoftKeyBoardEvent()?.observed(this, Observer<Nothing?> {
+        viewModel.uc.getHideSoftKeyBoardEvent()?.observed(this, Observer<Nothing?> {
             hideSoftKeyBoard()
         })
 
-        viewModel?.uc?.getBackEvent()?.observed(this, Observer<Nothing?> {
+        viewModel.uc.getBackEvent()?.observed(this, Observer<Nothing?> {
 
         })
     }
