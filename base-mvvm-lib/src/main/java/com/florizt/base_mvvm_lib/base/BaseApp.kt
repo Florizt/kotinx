@@ -6,5 +6,13 @@ package com.florizt.base_mvvm_lib.base
  * 佛祖保佑       永无BUG
  */
 class BaseApp {
+    companion object {
+        var test: Int? = 100
+    }
 
+    fun setTest(t: Int) {
+        test = t
+    }
+
+    fun getTest() = test
 }
