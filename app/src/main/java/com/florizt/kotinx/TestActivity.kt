@@ -2,7 +2,6 @@ package com.florizt.kotinx
 
 import android.os.Bundle
 import androidx.lifecycle.Observer
-import com.florizt.base_mvvm_lib.base.BaseApp
 import com.florizt.base_mvvm_lib.base.ui.BaseActivity
 import com.florizt.kotinx.databinding.ActivityMainBinding
 
@@ -26,13 +25,6 @@ class TestActivity : BaseActivity<ActivityMainBinding, TestViewModel>() {
 
     override fun initData() {
         println("$binding-------$viewModel}")
-
-        println("===111==${BaseApp.test}")
-        val baseApp = BaseApp()
-        println("===222==${BaseApp.test}===${baseApp.getTest()}===${BaseApp().getTest()}")
-        baseApp.setTest(200)
-        println("===333==${BaseApp.test}===${baseApp.getTest()}===${BaseApp().getTest()}")
-
     }
 
     override fun initViewObservable() {

@@ -60,6 +60,17 @@ ext {
             immersionbar             : 'com.gyf.immersionbar:immersionbar:2.3.3',
 
             // eventbus
-            eventbus                 : 'org.greenrobot:eventbus:3.0.0'
+            eventbus                 : 'org.greenrobot:eventbus:3.0.0',
+
+            // 适配
+            autosize                 : 'me.jessyan:autosize:1.1.2',
+
+            // BackgroundLibrary
+            backgroundLibrary        : 'com.noober.background:core:1.6.1',
+
+            //阴影布局
+            shadowLayout             : 'com.github.lihangleo2:ShadowLayout:3.1.8',
+
+            rxpermissions            : 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.3@aar'
     ]
 }

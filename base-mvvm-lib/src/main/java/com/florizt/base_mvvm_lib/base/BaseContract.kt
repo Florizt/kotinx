@@ -18,6 +18,12 @@ import com.florizt.base_mvvm_lib.R
  */
 interface BaseContract {
 
+    interface IApplication {
+        fun toBackground(activity: Activity) {}
+        fun toForeground(activity: Activity) {}
+        fun crashOpera(ex: Throwable) {}
+    }
+
     interface IView {
         fun initLayoutId(): Int
         fun initVariableId(): Int

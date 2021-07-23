@@ -2,6 +2,7 @@ package com.florizt.base_mvvm_lib.aop
 
 import com.florizt.base_mvvm_lib.aop.pointcut.ViewModelLifeCycle.onViewModelCreate
 import com.florizt.base_mvvm_lib.aop.pointcut.ViewModelLifeCycle.onViewModelDestroy
+import com.florizt.base_mvvm_lib.base.viewmodel.BaseViewModel
 import org.aspectj.lang.JoinPoint
 import org.aspectj.lang.annotation.After
 import org.aspectj.lang.annotation.Aspect
@@ -16,13 +17,17 @@ import org.greenrobot.eventbus.EventBus
 open class EventBusAspect {
     @After(onViewModelCreate)
     open fun initEventBusAspect(joinPoint: JoinPoint) {
-        if (!EventBus.getDefault().isRegistered(joinPoint.`this`)) {
-            EventBus.getDefault().register(joinPoint.`this`);
+        if (joinPoint.`this` is BaseViewModel) {
+            if (!EventBus.getDefault().isRegistered(joinPoint.`this`)) {
+                EventBus.getDefault().register(joinPoint.`this`);
+            }
         }
     }
 
     @After(onViewModelDestroy)
     open fun destroyEventBusAspect(joinPoint: JoinPoint) {
-        EventBus.getDefault().unregister(joinPoint.`this`);
+        if (joinPoint.`this` is BaseViewModel) {
+            EventBus.getDefault().unregister(joinPoint.`this`);
+        }
     }
 }

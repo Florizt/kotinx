@@ -34,6 +34,14 @@ dependencies {
     api rootProject.ext.dependencies.immersionbar
 
     api rootProject.ext.dependencies.eventbus
+
+    api rootProject.ext.dependencies.autosize
+
+    api rootProject.ext.dependencies.backgroundLibrary
+
+    api rootProject.ext.dependencies.shadowLayout
+
+    api rootProject.ext.dependencies.rxpermissions
 }
 
 kapt {

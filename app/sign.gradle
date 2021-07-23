@@ -28,6 +28,8 @@ android {
         }
 
         debug {
+            v1SigningEnabled true
+            v2SigningEnabled false
             storeFile file(properties.getProperty("DEBUG_STORE_FILE"))
             storePassword properties.getProperty("DEBUG_STORE_PASSWORD")
             keyAlias properties.getProperty("DEBUG_KEY_ALIAS")

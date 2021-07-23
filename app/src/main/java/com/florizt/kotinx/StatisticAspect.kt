@@ -1,9 +1,9 @@
 package com.florizt.kotinx
 
-import com.florizt.base_mvvm_lib.aop.pointcut.ActivityLifeCycle.onActivityCreate
+import com.florizt.base_mvvm_lib.aop.pointcut.ActivityLifeCycle.onActivityStart
 import org.aspectj.lang.JoinPoint
+import org.aspectj.lang.annotation.After
 import org.aspectj.lang.annotation.Aspect
-import org.aspectj.lang.annotation.Before
 
 /**
  * Created by wuwei
@@ -12,8 +12,8 @@ import org.aspectj.lang.annotation.Before
  */
 @Aspect
 open class StatisticAspect {
-    @Before(onActivityCreate)
+    @After(onActivityStart)
     open fun statisticAspect(joinPoint: JoinPoint){
-        // ...
+        println("----statisticAspect------------")
     }
 }
