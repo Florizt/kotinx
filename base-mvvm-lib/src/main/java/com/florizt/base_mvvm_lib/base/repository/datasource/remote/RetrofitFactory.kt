@@ -1,9 +1,12 @@
 package com.florizt.base_mvvm_lib.base.repository.datasource.remote
 
+import com.florizt.base_mvvm_lib.base.BaseApp
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
 import java.util.concurrent.TimeUnit
 
 /**
@@ -21,8 +24,12 @@ object RetrofitFactory {
             .writeTimeout(15000, TimeUnit.MILLISECONDS)
             .connectTimeout(15000, TimeUnit.MILLISECONDS)
             .retryOnConnectionFailure(true)
-            // TODO 文件系统
-//            .cache(Cache(cacheFile, 1024 * 1024 * 100))
+            .cache(
+                Cache(
+                    File(BaseApp.instance.getContext()?.cacheDir, "cache"),
+                    1024 * 1024 * 100
+                )
+            )
             .build()
     }
 

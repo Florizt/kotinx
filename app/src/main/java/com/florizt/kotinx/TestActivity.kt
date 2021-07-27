@@ -1,5 +1,6 @@
 package com.florizt.kotinx
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import com.florizt.base_mvvm_lib.base.ui.BaseActivity
@@ -27,8 +28,12 @@ class TestActivity : BaseActivity<ActivityMainBinding, TestViewModel>() {
         println("$binding-------$viewModel}")
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
     override fun initViewObservable() {
-        viewModel?.test?.observed(this, Observer {
+        viewModel.test.observed(this, Observer {
             println("-------------------$it")
         })
     }

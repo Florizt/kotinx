@@ -1,6 +1,7 @@
 package com.florizt.base_mvvm_lib.base
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.WindowManager
@@ -19,6 +20,22 @@ import com.florizt.base_mvvm_lib.R
 interface BaseContract {
 
     interface IApplication {
+        fun onActivityCreate(activity: Activity, savedInstanceState: Bundle?) {}
+        fun onActivityNewIntent(activity: Activity, intent: Intent?) {}
+        fun onActivitySaveInstanceState(activity: Activity, savedInstanceState: Bundle?) {}
+        fun onActivityResult(
+            activity: Activity,
+            requestCode: Int,
+            resultCode: Int,
+            data: Intent?
+        ) {
+        }
+
+        fun onActivityStart(activity: Activity) {}
+        fun onActivityResume(activity: Activity) {}
+        fun onActivityPause(activity: Activity) {}
+        fun onActivityStop(activity: Activity) {}
+        fun onActivityDestroy(activity: Activity) {}
         fun toBackground(activity: Activity) {}
         fun toForeground(activity: Activity) {}
         fun crashOpera(ex: Throwable) {}
@@ -63,18 +80,19 @@ interface BaseContract {
         fun isFullScreen(): Boolean = false
 
         /**
+         * 是否fitsSystemWindows
+         *
+         * @return
+         */
+        fun fitsSystemWindows(): Boolean = true
+
+        /**
          * 沉浸式非全屏下状态栏字体是否深色
          *
          * @return
          */
         fun statusBarDarkFont(): Boolean = true
 
-        /**
-         * 是否fitsSystemWindows
-         *
-         * @return
-         */
-        fun fitsSystemWindows(): Boolean = true
 
         /**
          * 沉浸式非全屏下状态栏背景颜色

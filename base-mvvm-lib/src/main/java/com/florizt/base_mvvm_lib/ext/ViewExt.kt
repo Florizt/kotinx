@@ -4,10 +4,14 @@ import android.graphics.Paint
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.text.Editable
+import android.text.TextUtils
 import android.text.TextWatcher
 import android.text.method.LinkMovementMethod
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
+import androidx.core.view.forEach
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,7 +28,7 @@ import com.bumptech.glide.request.RequestOptions
  * 2021/7/20
  * 佛祖保佑       永无BUG
  */
-@BindingAdapter(value = arrayOf("onClickCommand", "isThrottleFirst"), requireAll = false)
+@BindingAdapter(value = arrayOf("app:onClickCommand", "app:isThrottleFirst"), requireAll = false)
 fun View.onClickCommand(onClickCommand: () -> Unit, isThrottleFirst: Boolean) {
     val minTime = 500L
     var lastTime = 0L
@@ -42,7 +46,7 @@ fun View.onClickCommand(onClickCommand: () -> Unit, isThrottleFirst: Boolean) {
     }
 }
 
-@BindingAdapter(value = arrayOf("onLongClickCommand"))
+@BindingAdapter(value = arrayOf("app:onLongClickCommand"))
 fun View.onLongClickCommand(onLongClickCommand: () -> Unit) {
     setOnLongClickListener { v ->
         onLongClickCommand()
@@ -50,10 +54,132 @@ fun View.onLongClickCommand(onLongClickCommand: () -> Unit) {
     }
 }
 
+// 0-IDLE,1-LOADING, 2-NODATA,3-ERROR,4-SUCCESS
+const val IDLE = 0
+const val LOADING = 1
+const val NODATA = 2
+const val ERROR = 3
+const val SUCCESS = 4
+@BindingAdapter(
+    value = arrayOf(
+        "app:status",
+        "app:view_loading",
+        "app:view_nodata",
+        "app:view_error",
+        "app:error_click"
+    ), requireAll = false
+)
+fun ViewGroup.statusView(
+    status: Int,
+    view_loading: Int?,
+    view_nodata: Int?,
+    view_error: Int?,
+    errorClick: () -> Unit
+) {
+    if (childCount == 1) {
+        getChildAt(0).tag = "view_success"
+    }
+    val layoutInflater = LayoutInflater.from(context)
+    when (status) {
+        IDLE,
+        SUCCESS -> {
+            forEach {
+                if (TextUtils.equals(it.tag as String, "view_loading")
+                    || TextUtils.equals(it.tag as String, "view_nodata")
+                    || TextUtils.equals(it.tag as String, "view_error")
+                ) {
+                    removeView(it)
+                } else if (TextUtils.equals(it.tag as String, "view_success")) {
+                    it.visibility = View.VISIBLE
+                }
+            }
+        }
+        LOADING -> {
+            forEach {
+                if (TextUtils.equals(it.tag as String, "view_nodata")
+                    || TextUtils.equals(it.tag as String, "view_error")
+                ) {
+                    removeView(it)
+                } else if (TextUtils.equals(it.tag as String, "view_success")) {
+                    it.visibility = View.GONE
+                }
+            }
+            view_loading?.let {
+                val loadingView = layoutInflater.inflate(it, null, false)
+                loadingView.tag = "view_loading"
+                addView(
+                    loadingView,
+                    ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                )
+            }
+        }
+        NODATA -> {
+            forEach {
+                if (TextUtils.equals(it.tag as String, "view_loading")
+                    || TextUtils.equals(it.tag as String, "view_error")
+                ) {
+                    removeView(it)
+                } else if (TextUtils.equals(it.tag as String, "view_success")) {
+                    it.visibility = View.GONE
+                }
+            }
+            view_nodata?.let {
+                val nodataView = layoutInflater.inflate(it, null, false)
+                nodataView.tag = "view_nodata"
+                addView(
+                    nodataView,
+                    ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                )
+            }
+        }
+        ERROR -> {
+            forEach {
+                if (TextUtils.equals(it.tag as String, "view_loading")
+                    || TextUtils.equals(it.tag as String, "view_nodata")
+                ) {
+                    removeView(it)
+                } else if (TextUtils.equals(it.tag as String, "view_success")) {
+                    it.visibility = View.GONE
+                }
+            }
+            view_error?.let {
+                val errorView = layoutInflater.inflate(it, null, false)
+                errorView.tag = "view_error"
+                addView(
+                    errorView,
+                    ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                )
+                errorView.onClickCommand(errorClick, false)
+            }
+        }
+        else -> {
+            forEach {
+                if (TextUtils.equals(it.tag as String, "view_loading")
+                    || TextUtils.equals(it.tag as String, "view_nodata")
+                    || TextUtils.equals(it.tag as String, "view_error")
+                ) {
+                    removeView(it)
+                } else if (TextUtils.equals(it.tag as String, "view_success")) {
+                    it.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+}
+
 /**
  * view是否需要获取焦点
  */
-@BindingAdapter("requestFocus")
+@BindingAdapter("app:requestFocus")
 fun View.requestFocusCommand(needRequestFocus: Boolean) {
     if (needRequestFocus) {
         isFocusableInTouchMode = true
@@ -66,7 +192,7 @@ fun View.requestFocusCommand(needRequestFocus: Boolean) {
 /**
  * view的焦点发生变化的事件绑定
  */
-@BindingAdapter("onFocusChangeCommand")
+@BindingAdapter("app:onFocusChangeCommand")
 fun View.onFocusChangeCommand(onFocusChangeCommand: () -> Unit) {
     setOnFocusChangeListener { view, b -> onFocusChangeCommand() }
 }
@@ -74,7 +200,7 @@ fun View.onFocusChangeCommand(onFocusChangeCommand: () -> Unit) {
 /**
  * view的显示隐藏
  */
-@BindingAdapter("isVisible")
+@BindingAdapter("app:isVisible")
 fun View.isVisible(visibility: Boolean) {
     if (visibility) {
         this.visibility = View.VISIBLE
@@ -83,7 +209,7 @@ fun View.isVisible(visibility: Boolean) {
     }
 }
 
-@BindingAdapter(value = arrayOf("layout_width", "layout_height"), requireAll = false)
+@BindingAdapter(value = arrayOf("app:layout_width", "app:layout_height"), requireAll = false)
 fun View.setLayoutWidth(width: Float, height: Float) {
     if (width != 0f) {
         val params = layoutParams
@@ -97,18 +223,18 @@ fun View.setLayoutWidth(width: Float, height: Float) {
     }
 }
 
-@BindingAdapter("selected")
+@BindingAdapter("app:selected")
 fun View.setSeleted(selected: Boolean) {
     isSelected = selected
 }
 
-@BindingAdapter("enable")
+@BindingAdapter("app:enable")
 fun View.setEnable(enable: Boolean) {
     isEnabled = enable
 }
 
 @BindingAdapter(
-    value = arrayOf("margin_top", "margin_bottom", "margin_left", "margin_right"),
+    value = arrayOf("app:margin_top", "app:margin_bottom", "app:margin_left", "app:margin_right"),
     requireAll = false
 )
 fun View.setLayoutMargins(
@@ -142,17 +268,17 @@ fun View.setLayoutMargins(
     layoutParams = params
 }
 
-@BindingAdapter("text_color")
+@BindingAdapter("app:text_color")
 fun TextView.setTextColor(colorId: Int) {
     setTextColor(colorId)
 }
 
-@BindingAdapter("textSize")
+@BindingAdapter("app:textSize")
 fun TextView.setTextSize(size: Int) {
     textSize = size.toFloat()
 }
 
-@BindingAdapter("textStyle")
+@BindingAdapter("app:textStyle")
 fun TextView.setTextStyle(style: Int) {
     if (style == 0) {
         typeface = Typeface.DEFAULT
@@ -163,14 +289,14 @@ fun TextView.setTextStyle(style: Int) {
     }
 }
 
-@BindingAdapter("movementMethod")
+@BindingAdapter("app:movementMethod")
 fun TextView.setMovementMethod(movementMethod: Boolean) {
     if (movementMethod) {
         setMovementMethod(LinkMovementMethod.getInstance())
     }
 }
 
-@BindingAdapter("flag")
+@BindingAdapter("app:flag")
 fun TextView.setFlag(flag: Int) {
     paint.flags = flag or Paint.ANTI_ALIAS_FLAG //中划线
 }
@@ -178,7 +304,7 @@ fun TextView.setFlag(flag: Int) {
 /**
  * EditText重新获取焦点的事件绑定
  */
-@BindingAdapter("requestFocus")
+@BindingAdapter("app:requestFocus")
 fun EditText.requestFocusCommand(needRequestFocus: Boolean) {
     if (needRequestFocus) {
         setSelection(text.length)
@@ -191,7 +317,7 @@ fun EditText.requestFocusCommand(needRequestFocus: Boolean) {
 /**
  * EditText输入文字改变的监听
  */
-@BindingAdapter("textChanged")
+@BindingAdapter("app:textChanged")
 fun EditText.addTextChangedListener(textChanged: () -> Unit) {
     addTextChangedListener(object : TextWatcher {
         override fun beforeTextChanged(
@@ -210,7 +336,10 @@ fun EditText.addTextChangedListener(textChanged: () -> Unit) {
     })
 }
 
-@BindingAdapter(value = arrayOf("url", "placeholderRes", "strategy"), requireAll = false)
+@BindingAdapter(
+    value = arrayOf("app:url", "app:placeholderRes", "app:strategy"),
+    requireAll = false
+)
 fun ImageView.setImageUri(
     url: Any?,
     placeholderRes: Drawable?,
@@ -241,8 +370,8 @@ const val RECYCLERVIEW_GRID: Int = 1
 
 @BindingAdapter(
     value = arrayOf(
-        "type", "orientation", "reverseLayout",
-        "canScrollVertically", "canScrollHorizontally", "spanCount"
+        "app:type", "app:orientation", "app:reverseLayout",
+        "app:canScrollVertically", "app:canScrollHorizontally", "app:spanCount"
     ),
     requireAll = false
 )
@@ -277,7 +406,7 @@ fun RecyclerView.setLayoutManager(
     }
 }
 
-@BindingAdapter("linearSnapHelper")
+@BindingAdapter("app:linearSnapHelper")
 fun RecyclerView.setLinearSnapHelper(snapHelper: Boolean) {
     if (snapHelper) {
         val linearSnapHelper = LinearSnapHelper()
