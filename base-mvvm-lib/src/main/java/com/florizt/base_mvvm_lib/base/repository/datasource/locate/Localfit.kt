@@ -90,7 +90,7 @@ class Localfit(private var context: Context, private var psw: String?) {
                 key.forEach { context.getSharedPreferences().remove(it) }
             }
         }
-        return null;
+        return true;
     }
 
     class Builder(var context: Context, var psw: String?) {
