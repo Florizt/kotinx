@@ -71,6 +71,9 @@ ext {
             //阴影布局
             shadowLayout             : 'com.github.lihangleo2:ShadowLayout:3.1.8',
 
-            rxpermissions            : 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.3@aar'
+            rxpermissions            : 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.3@aar',
+
+            //视频合并
+            mp4parser                : 'com.googlecode.mp4parser:isoparser:1.1.21'
     ]
 }

@@ -252,6 +252,49 @@ fun reLoadData()={
 文件目录为：（以保存图片为例）
 1、版本大于安卓Q：Android/data/data/packageName/image/test.png
 2、版本小于安卓Q：sd/packageName/image/test.png
+| 属性      | 描述 |
+| --------- | -----:|
+| createFile| 创建文件|
+| createDir| 创建文件夹|
+
+
+###  Uri获取
+框架适配了Uri相关功能，包括通过file获取文件Uri路径，通过Uri路径获取文件绝对路径，具体可见：ContextExt,适配安卓M和安卓Q
+| 属性      | 描述 |
+| --------- | -----:|
+| fileToUri| 通过file获取文件Uri路径|
+| uriToPath| 通过Uri路径获取文件绝对路径|
+需要使用者配置FileProvider和file_paths，如下：
+```
+<!--FileProvider-->
+<provider
+    android:name="androidx.core.content.FileProvider"
+    android:authorities="${applicationId}.fileprovider"
+    android:exported="false"
+    android:grantUriPermissions="true">
+    <meta-data
+        android:name="android.support.FILE_PROVIDER_PATHS"
+        android:resource="@xml/file_paths" />
+</provider>
+
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <paths>
+        <root-path
+            name="camera_photos"
+            path="" />
+        <external-path
+            name="camera_photos"
+            path="" />
+        <external-path
+            name="files_root"
+            path="download" />
+        <external-path
+            name="external_storage_root"
+            path="." />
+    </paths>
+</resources>
+```
 
 
 ##  ViewModel层
@@ -313,7 +356,7 @@ override fun onCreate() {
             val age = testRepository.getAge()
             val name = testRepository.getName()
             if (age is Result.Success) {
-                println("===${age.data}")
+                println("${age.data}")
             } else if (age is Result.Failed) {
 
             }
@@ -323,4 +366,26 @@ override fun onCreate() {
 ```
 这就是coroutines协程，用同步的方式写异步代码。
 
+##  音视频模块
+框架提供了系统相机拍照、录像、裁剪功能，具体可见：SystemCameraManager
+框架提供了自定义相机预览、拍照、录像功能，并且支持暂停录像、视频分片与视频合并功能，具体可见：CustomCameraManager
+框架提供了录音、暂停、继续、停止、播放等功能，支持录音分片、录音合并功能，具体可见：AudioRecorder
+
 还有更多的kotlin扩展属性都在ext包下。可自行研究。
+
+##  框架使用
+1、Add it in your root build.gradle at the end of repositories:
+```
+allprojects {
+    repositories {
+        //...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+2、Add the dependency
+```
+dependencies {
+        implementation 'com.github.Florizt:kotinx:1.0.0'
+}
+```

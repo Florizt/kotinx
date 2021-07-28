@@ -28,7 +28,7 @@ class Localfit(private var context: Context, private var psw: String?) {
             service.classLoader,
             arrayOf(service),
             InvocationHandler { any, method, args ->
-                if (method.declaringClass === Any::class.java) {
+                if (method.declaringClass == Any::class.java) {
                     method.invoke(this, args)
                 }
 

@@ -42,6 +42,8 @@ dependencies {
     api rootProject.ext.dependencies.shadowLayout
 
     api rootProject.ext.dependencies.rxpermissions
+
+    api rootProject.ext.dependencies.mp4parser
 }
 
 kapt {
