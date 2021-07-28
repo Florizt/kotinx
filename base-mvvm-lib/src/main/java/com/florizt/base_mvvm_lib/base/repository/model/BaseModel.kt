@@ -40,4 +40,14 @@ open class BaseModel {
             }
         }
     }
+
+    suspend fun <T : Any> handleLocalResponse(
+        response: T,
+        successBlock: (suspend CoroutineScope.() -> Unit)? = null
+    ): Result<T> {
+        return coroutineScope {
+            successBlock?.let { it() }
+            Result.Success(response)
+        }
+    }
 }

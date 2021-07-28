@@ -8,10 +8,13 @@ import com.florizt.base_mvvm_lib.base.repository.model.BaseModel
  * 2021/7/19
  * 佛祖保佑       永无BUG
  */
-class TestModel(private val remoteService: ITestRemoteService/*,private val localService: ITestLocalService*/) : BaseModel() {
+class TestModel(private val remoteService: ITestRemoteService,private val localService: ITestLocalService) : BaseModel() {
 
-    suspend fun getName(): Result<Int> = callRequest {
-        println("----$remoteService")
-        handleResponse(remoteService.getTest("aaa"))
+    suspend fun getAge(): Result<Int> = callRequest {
+        handleResponse(remoteService.getAge("aaa"))
+    }
+
+    suspend fun getName(): Result<String> = callRequest {
+        handleLocalResponse(localService.getName())
     }
 }

@@ -5,6 +5,7 @@ import android.util.Base64
 import java.io.*
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
+import kotlin.reflect.KType
 
 /**
  * Created by wuwei
@@ -13,12 +14,12 @@ import java.lang.reflect.Method
  */
 fun SharedPreferences.put(
     key: String,
-    value: Any
+    value: Any?
 ) = put(key, value, null)
 
 fun SharedPreferences.put(
     key: String,
-    value: Any,
+    value: Any?,
     psw: String?
 ) {
     val editor = edit()
@@ -42,9 +43,9 @@ fun SharedPreferences.put(
                 v = Base64.encodeToString(bytes, Base64.DEFAULT)
             }
         }
-        psw?.also { v = v?.encrypt3DES(psw) }
+        psw?.also { v = v?.encrypt3DES(it) }
         editor.putString(key, v)
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         e.printStackTrace()
     } finally {
         SharedPreferencesCompat.apply(editor)
@@ -70,7 +71,7 @@ fun SharedPreferences.put(
  */
 fun SharedPreferences.get(
     key: String,
-    convert: Class<*>
+    convert: KType?
 ): Any? =
     getDecrypt(key, null, convert)
 
@@ -85,26 +86,27 @@ fun SharedPreferences.get(
 fun SharedPreferences.getDecrypt(
     key: String,
     psw: String?,
-    convert: Class<*>
+    convert: KType?
 ): Any? {
     var v: String? = getString(key, "")
     var bis: ByteArrayInputStream? = null
     var ois: ObjectInputStream? = null
     try {
-        psw?.also { v = v?.decrypt3DES(psw) }
-        return if (convert == String::class.java) {
+        psw?.also { v = v?.decrypt3DES(it) }
+
+        return if (convert?.classifier == String::class) {
             v
-        } else if (convert == Long::class.java || convert == Long::class.javaPrimitiveType) {
+        } else if (convert?.classifier == Long::class) {
             v?.toLong()
-        } else if (convert == Boolean::class.java || convert == Boolean::class.javaPrimitiveType) {
+        } else if (convert?.classifier == Boolean::class) {
             v?.toBoolean()
-        } else if (convert == Float::class.java || convert == Float::class.javaPrimitiveType) {
+        } else if (convert?.classifier == Float::class) {
             v?.toFloat()
-        } else if (convert == Double::class.java || convert == Double::class.javaPrimitiveType) {
+        } else if (convert?.classifier == Double::class) {
             v?.toDouble()
-        } else if (convert == Int::class.java || convert == Int::class.javaPrimitiveType) {
+        } else if (convert?.classifier == Int::class) {
             v?.toInt()
-        } else if (convert == Array<Byte>::class.java || convert == ByteArray::class.java) {
+        } else if (convert?.classifier == Array<Byte>::class) {
             v?.toByteArray()
         } else {
             val bytes =
@@ -113,7 +115,7 @@ fun SharedPreferences.getDecrypt(
             ois = ObjectInputStream(bis)
             ois.readObject()
         }
-    } catch (e: java.lang.Exception) {
+    } catch (e: Throwable) {
         e.printStackTrace()
     } finally {
         try {

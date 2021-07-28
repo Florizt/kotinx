@@ -11,5 +11,5 @@ import retrofit2.http.Query
  */
 interface ITestRemoteService {
     @GET("get/remote")
-    suspend fun getTest(@Query("name") name: String): BaseHttpResult<Int>
+    suspend fun getAge(@Query("uid") uid: String): BaseHttpResult<Int>
 }

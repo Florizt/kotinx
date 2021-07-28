@@ -10,7 +10,6 @@ import com.florizt.base_mvvm_lib.base.viewmodel.BaseViewModel
 import com.florizt.base_mvvm_lib.ext.IDLE
 import com.florizt.base_mvvm_lib.ext.launchUI
 import com.florizt.base_mvvm_lib.ext.launchWithIO
-import com.florizt.base_mvvm_lib.ext.launchWithUI
 import org.greenrobot.eventbus.EventBus
 
 /**
@@ -34,17 +33,14 @@ class TestViewModel(private val testRepository: TestRepository) : BaseViewModel(
         println("onCreate")
         launchUI {
             launchWithIO {
-                val t = testRepository.getTest()
-                if (t is Result.Success) {
-                    val data = t.data
-                } else if (t is Result.Failed) {
+                val age = testRepository.getAge()
+                val name = testRepository.getName()
+                if (age is Result.Success) {
+                    println("===${age.data}")
+                } else if (age is Result.Failed) {
 
                 }
             }
-
-            launchWithUI { }
-
-            val testItemViewModel = TestItemViewModel(this@TestViewModel)
         }
     }
 

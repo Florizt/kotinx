@@ -25,17 +25,17 @@ Model
 Service
       localService
             示例：interface ITestLocalService {
-                   @L_POST(type = LocalType.SP, key = arrayOf("name"))
-                   suspend fun setName(name: String)
+                    @L_POST(type = LocalType.SP, key = arrayOf("name"))
+                    suspend fun setName(name: String)
 
-                   @L_GET(type = LocalType.SP, key = arrayOf("name"))
-                   suspend fun getName(): String
-               }
+                    @L_GET(type = LocalType.SP, key = arrayOf("name"))
+                    suspend fun getName(): String
+                 }
       remoteService
             示例：interface ITestRemoteService {
-                   @GET("get/remote")
-                   suspend fun getTest(@Query("name") name: String): BaseHttpResult<Int>
-               }
+                    @GET("get/remote")
+                    suspend fun getAge(@Query("uid") uid: String): BaseHttpResult<Int>
+                 }
 
 
 注册：
@@ -75,7 +75,10 @@ App.kt 示例：
 class App : Application() {
     override fun onCreate() {
         super.onCreate()
-        startKoin { modules(allModule) }
+        startKoin {
+            androidContext(this@App.applicationContext)
+            modules(allModule)
+        }
     }
 }
 ```
@@ -124,7 +127,7 @@ class App : Application() {
 内部已通过此AOP思想，用AppStackManager实现应用堆栈管理，具体可见：AppStackAspect。AppStackManager提供了一管理堆栈的方法。
 
 ###  全局Context管理
-内部已通过此AOP思想，用BaseApp实现全局Context管理，具体可见：ApplicationAspect。无需自动init。
+内部已通过此AOP思想，用BaseApp实现全局Context管理，具体可见：ApplicationAspect。无需手动init。
 
 ###  适配
 内部已通过此AOP思想，用BaseApp实现适配，具体可见：ApplicationAspect。默认适配宽高为：360*640。
@@ -134,7 +137,10 @@ class App : Application(), BaseContract.IApplication {
     @AutoSize(designWidthInDp = 375, designHeightInDp = 664)
     override fun onCreate() {
         super.onCreate()
-        startKoin { modules(allModule) }
+        startKoin {
+            androidContext(this@App.applicationContext)
+            modules(allModule)
+        }
     }
 }
 ```
@@ -256,21 +262,25 @@ fun reLoadData()={
 具体可见：ViewModelExt。示例：
 ```
 launchUI {
-    launchWithIO { testRepository.getTest() }
+    launchWithIO {
+        val age = testRepository.getAge()
+        val name = testRepository.getName()
+    }
 
     launchWithUI { }
 }
 ```
 
-###  Repository层
+##  Repository层
 通过持有Model，调用Model中的方法，作一层中转，不直接持有Service。示例：
 ```
 class TestRepository(private val testModel: TestModel) {
-    suspend fun getTest(): Result<Int> = testModel.getName()
+    suspend fun getAge(): Result<Int> = testModel.getAge()
+    suspend fun getName(): Result<String> = testModel.getName()
 }
 ```
 
-###  Model层
+##  Model层
 通过持有Service，获取本地数据获取网络数据。
 鉴于获取网络数据采用的是Retrofit+OKHttp+coroutines。所以需要对Entity进行一层封装处理，获取到数据之后，对异常或者自定义错误码进行处理。所以这里封装BaseModel，所有Model都需要继承BaseModel。
 
@@ -283,23 +293,31 @@ class TestRepository(private val testModel: TestModel) {
 ```
 class TestModel(private val remoteService: ITestRemoteService,private val localService: ITestLocalService) : BaseModel() {
 
-    suspend fun getName(): Result<Int> = callRequest {
-        println("----$remoteService")
-        handleResponse(remoteService.getTest("aaa"))
+    suspend fun getAge(): Result<Int> = callRequest {
+        handleResponse(remoteService.getAge("aaa"))
+    }
+
+    suspend fun getName(): Result<String> = callRequest {
+        handleLocalResponse(localService.getName())
     }
 }
 ```
 
 在ViewModel中就可以直接获取到数据：
 ```
-launchUI {
-    launchWithIO {
-        val t = testRepository.getTest()
-        if (t is Result.Success) {
-	      val data = t.data
-         } else if (t is Result.Failed) {
+override fun onCreate() {
+    super.onCreate()
+    println("onCreate")
+    launchUI {
+        launchWithIO {
+            val age = testRepository.getAge()
+            val name = testRepository.getName()
+            if (age is Result.Success) {
+                println("===${age.data}")
+            } else if (age is Result.Failed) {
 
-         }
+            }
+        }
     }
 }
 ```

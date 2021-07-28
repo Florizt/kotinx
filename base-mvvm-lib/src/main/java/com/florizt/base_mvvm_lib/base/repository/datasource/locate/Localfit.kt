@@ -8,6 +8,7 @@ import com.florizt.base_mvvm_lib.ext.remove
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
+import kotlin.reflect.jvm.kotlinFunction
 
 /**
  * Created by wuwei
@@ -45,8 +46,8 @@ class Localfit(private var context: Context, private var psw: String?) {
 
     fun parseMethodAnnotation(
         method: Method,
-        annotation: Annotation,
-        args: Array<Any>,
+        annotation: Annotation?,
+        args: Array<Any>?,
         context: Context,
         psw: String?
     ): Any? {
@@ -55,24 +56,24 @@ class Localfit(private var context: Context, private var psw: String?) {
             val key = annotation.key
             if (type == LocalType.SP) {
                 return context.getSharedPreferences()
-                    .getDecrypt(key[0], psw, method.getReturnType());
+                    .getDecrypt(key[0], psw, method.kotlinFunction?.returnType);
             }
         } else if (annotation is L_POST) {
             val type = annotation.type
             val key = annotation.key
-            if (key.size != args.size) {
+            if (key.size != args?.size) {
                 throw IllegalArgumentException("annotation SP key must match args");
             }
 
             if (type == LocalType.SP) {
                 key.forEachIndexed { index, s ->
-                    context.getSharedPreferences().put(s, args.get(index), psw)
+                    context.getSharedPreferences().put(s, args?.get(index), psw)
                 }
             }
         } else if (annotation is L_PUT) {
             val type = annotation.type
             val key = annotation.key
-            if (key.size != args.size) {
+            if (key.size != args?.size) {
                 throw IllegalArgumentException("annotation SP key must match args");
             }
 

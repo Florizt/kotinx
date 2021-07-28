@@ -3,6 +3,7 @@ package com.florizt.kotinx
 import android.app.Application
 import com.florizt.base_mvvm_lib.base.AutoSize
 import com.florizt.base_mvvm_lib.base.BaseContract
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
 /**
@@ -14,6 +15,9 @@ class App : Application(), BaseContract.IApplication {
     @AutoSize(designWidthInDp = 375, designHeightInDp = 664)
     override fun onCreate() {
         super.onCreate()
-        startKoin { modules(allModule) }
+        startKoin {
+            androidContext(this@App.applicationContext)
+            modules(allModule)
+        }
     }
 }
