@@ -14,6 +14,10 @@ import org.aspectj.lang.annotation.Aspect
  * 2021/7/23
  * 佛祖保佑       永无BUG
  */
+/**
+ * 应用前后台监控
+ * 可通过在Application里实现 [com.florizt.base_mvvm_lib.base.BaseContract.IApplication]，重写其进入前后台方法
+ */
 @Aspect
 open class BackgroundAspect {
     @After(onActivityStart)

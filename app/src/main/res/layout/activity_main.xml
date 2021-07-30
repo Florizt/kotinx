@@ -34,7 +34,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_gravity="center"
-                android:text="@{String.valueOf(viewModel.status)}" />
+                android:text="@{String.valueOf(viewModel.test)}" />
         </FrameLayout>
     </LinearLayout>
 

@@ -13,6 +13,11 @@ import org.aspectj.lang.annotation.Aspect
  * 2021/7/23
  * 佛祖保佑       永无BUG
  */
+/**
+ * 对需要在Application中初始化框架的操作，进行切面处理
+ * 包括 [BaseApp] 中的全局Context和[AutoSize]适配
+ * 包括 [CrashHandler] 中的全局异常捕获
+ */
 @Aspect
 open class ApplicationAspect {
     @After("execution(* android.app.Application.onCreate())")

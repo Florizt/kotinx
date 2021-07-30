@@ -13,6 +13,11 @@ import org.greenrobot.eventbus.EventBus
  * 2021/7/22
  * 佛祖保佑       永无BUG
  */
+/**
+ *  对ViewModel生命周期进行切面
+ *  注册注销EventBus
+ *  接收消息参考[BaseViewModel.onMessageEvent]
+ */
 @Aspect
 open class EventBusAspect {
     @After(onViewModelCreate)

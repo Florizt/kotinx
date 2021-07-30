@@ -5,6 +5,9 @@ package com.florizt.base_mvvm_lib.base.repository.datasource.remote
  * 2021/7/19
  * 佛祖保佑       永无BUG
  */
+/**
+ * http常见错误码
+ */
 object HttpResultCode {
 
     //对应HTTP的状态码

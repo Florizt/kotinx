@@ -25,7 +25,7 @@ class TestActivity : BaseActivity<ActivityMainBinding, TestViewModel>() {
     }
 
     override fun initData() {
-        println("$binding-------$viewModel}")
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -34,7 +34,7 @@ class TestActivity : BaseActivity<ActivityMainBinding, TestViewModel>() {
 
     override fun initViewObservable() {
         viewModel.test.observed(this, Observer {
-            println("-------------------$it")
+            println(">>>>>>>>>adapterTest=222======：${it}")
         })
     }
 }

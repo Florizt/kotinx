@@ -5,6 +5,9 @@ package com.florizt.base_mvvm_lib.aop.pointcut
  * 2021/7/22
  * 佛祖保佑       永无BUG
  */
+/**
+ * 对ViewModel的生命周期进行切面
+ */
 object ViewModelLifeCycle {
     const val onViewModelCreate: String =
         "execution(* com.florizt.base_mvvm_lib.base.viewmodel.BaseViewModel.onCreate())"

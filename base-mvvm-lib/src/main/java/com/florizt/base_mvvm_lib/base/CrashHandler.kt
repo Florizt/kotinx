@@ -20,6 +20,15 @@ import java.util.*
  * 2021/7/23
  * 佛祖保佑       永无BUG
  */
+/**
+ * 异常捕获类
+ * 需要在Application中实现[com.florizt.base_mvvm_lib.base.BaseContract.IApplication.crashOpera]
+ * 如果不重写该方法，框架内部默认将异常导入本地，本地路径为：
+ *  --版本大于安卓Q：Android/data/data/packageName/document/crash/crash_test.trace
+ *  --版本小于安卓Q：sd/packageName/document/crash/crash_test.trace
+ * @property context Context?
+ * @property defaultCrashHandler UncaughtExceptionHandler?
+ */
 class CrashHandler private constructor() : Thread.UncaughtExceptionHandler {
     private var context: Context? = null
     private var defaultCrashHandler: Thread.UncaughtExceptionHandler? = null

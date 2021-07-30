@@ -26,10 +26,10 @@ Service
       localService
             示例：interface ITestLocalService {
                     @L_POST(type = LocalType.SP, key = arrayOf("name"))
-                    suspend fun setName(name: String)
+                    suspend fun setName(name: String): BaseResponse<Unit>
 
                     @L_GET(type = LocalType.SP, key = arrayOf("name"))
-                    suspend fun getName(): String
+                    suspend fun getName(): BaseResponse<String>
                  }
       remoteService
             示例：interface ITestRemoteService {
@@ -300,6 +300,11 @@ fun reLoadData()={
 ##  ViewModel层
 通过持有Repository，调用操作数据的方法。
 
+获取到的数据通过LiveData或者DataBinding的ObservableField通知到UI层
+
+注意：LiveData如果被observed，那么xml和observed都会收到通知，所以LiveData和ObservableField需要区分场景使用
+
+
 ###  协程
 框架内部通过kotlin扩展属性，使用ViewModelExt对ViewModel里的协程进行一个扩展。包括，主线程协程和子线程协程等。
 具体可见：ViewModelExt。示例：
@@ -337,7 +342,11 @@ class TestRepository(private val testModel: TestModel) {
 class TestModel(private val remoteService: ITestRemoteService,private val localService: ITestLocalService) : BaseModel() {
 
     suspend fun getAge(): Result<Int> = callRequest {
-        handleResponse(remoteService.getAge("aaa"))
+        handleHttpResponse(remoteService.getAge("aaa"))
+    }
+
+    suspend fun setName(name: String): Result<Unit> = callRequest {
+        handleLocalResponse(localService.setName(name))
     }
 
     suspend fun getName(): Result<String> = callRequest {

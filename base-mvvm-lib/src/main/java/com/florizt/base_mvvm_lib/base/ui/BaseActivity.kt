@@ -20,6 +20,14 @@ import kotlin.reflect.KClass
  * 2021/7/16
  * 佛祖保佑       永无BUG
  */
+/**
+ * 轻量的Activity基类
+ * @param V : ViewDataBinding
+ * @param VM : BaseViewModel
+ * @property activity AppCompatActivity
+ * @property binding V
+ * @property viewModel VM
+ */
 abstract class BaseActivity<V : ViewDataBinding, VM : BaseViewModel> :
     AppCompatActivity(), BaseContract.IView, BaseContract.IWindow, BaseContract.IBar {
 
@@ -104,7 +112,9 @@ abstract class BaseActivity<V : ViewDataBinding, VM : BaseViewModel> :
         // databinding绑定viewModel，不然xml用不了viewModel
         binding.setVariable(initVariableId(), viewModel)
 
-        // databinding绑定livedata，不然xml收不到数据改变通知，也可以直接使用DataBinding的ObservableField
+        // databinding绑定LiveData，不然xml收不到数据改变通知
+        // 也可以直接使用DataBinding的ObservableField
+        // 注意：LiveData如果被observed，那么xml和observed都会收到通知，所以LiveData和ObservableField需要区分场景使用
         binding.lifecycleOwner = this
 
         // viewModel绑定lifecycle，不然viewModel没有Activity生命周期

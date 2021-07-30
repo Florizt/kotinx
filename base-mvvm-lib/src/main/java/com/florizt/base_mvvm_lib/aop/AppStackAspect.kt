@@ -13,6 +13,10 @@ import org.aspectj.lang.annotation.Aspect
  * 2021/7/23
  * 佛祖保佑       永无BUG
  */
+/**
+ * 对Activity生命周期进行切面
+ * 通过 [AppStackManager] 对Activity进行堆栈管理
+ */
 @Aspect
 open class AppStackAspect {
     @After(onActivityCreate)

@@ -1,6 +1,7 @@
 package com.florizt.base_mvvm_lib.base.repository.datasource.remote
 
 import android.net.ParseException
+import com.florizt.base_mvvm_lib.base.repository.datasource.entity.ResultException
 import com.google.gson.JsonParseException
 import org.json.JSONException
 import retrofit2.HttpException
@@ -15,7 +16,10 @@ import javax.net.ssl.SSLHandshakeException
  * 2021/7/19
  * 佛祖保佑       永无BUG
  */
-object DealException {
+/**
+ * http请求异常统一处理
+ */
+object DispatchException {
     fun handlerException(e: Exception): ResultException {
         val ex: ResultException
         if (e is ResultException) {

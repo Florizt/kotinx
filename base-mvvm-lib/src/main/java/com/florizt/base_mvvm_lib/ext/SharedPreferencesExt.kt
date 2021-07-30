@@ -14,14 +14,14 @@ import kotlin.reflect.KType
  */
 fun SharedPreferences.put(
     key: String,
-    value: Any?
+    value: Any
 ) = put(key, value, null)
 
 fun SharedPreferences.put(
     key: String,
-    value: Any?,
+    value: Any,
     psw: String?
-) {
+): Boolean {
     val editor = edit()
     var bos: ByteArrayOutputStream? = null
     var oos: ObjectOutputStream? = null
@@ -45,8 +45,10 @@ fun SharedPreferences.put(
         }
         psw?.also { v = v?.encrypt3DES(it) }
         editor.putString(key, v)
+        return true
     } catch (e: Throwable) {
         e.printStackTrace()
+        return false
     } finally {
         SharedPreferencesCompat.apply(editor)
         try {
@@ -83,12 +85,16 @@ fun SharedPreferences.get(
  * @param convert 转换类型
  * @return 值
  */
+@Throws
 fun SharedPreferences.getDecrypt(
     key: String,
     psw: String?,
     convert: KType?
 ): Any? {
-    var v: String? = getString(key, "")
+    var v: String? = getString(key, null)
+    if (v == null) {
+        return v
+    }
     var bis: ByteArrayInputStream? = null
     var ois: ObjectInputStream? = null
     try {
@@ -117,6 +123,7 @@ fun SharedPreferences.getDecrypt(
         }
     } catch (e: Throwable) {
         e.printStackTrace()
+        return v
     } finally {
         try {
             if (bis != null) {
@@ -129,16 +136,21 @@ fun SharedPreferences.getDecrypt(
             e.printStackTrace()
         }
     }
-    return v
 }
 
 /**
  * 移除某个key值已经对应的值
  */
-fun SharedPreferences.remove(key: String) {
-    val editor: SharedPreferences.Editor = edit()
-    editor.remove(key)
-    SharedPreferencesCompat.apply(editor)
+fun SharedPreferences.remove(key: String): Boolean {
+    try {
+        val editor: SharedPreferences.Editor = edit()
+        editor.remove(key)
+        SharedPreferencesCompat.apply(editor)
+        return true
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return false
+    }
 }
 
 /**

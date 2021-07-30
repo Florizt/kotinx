@@ -9,6 +9,10 @@ import me.jessyan.autosize.AutoSizeConfig
  * 2021/7/22
  * 佛祖保佑       永无BUG
  */
+/**
+ * 管理全局Context，进行适配操作
+ * @property context Context?
+ */
 class BaseApp private constructor() {
     private var context: Context? = null
 

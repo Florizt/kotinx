@@ -1,6 +1,6 @@
 package com.florizt.kotinx
 
-import com.florizt.base_mvvm_lib.base.repository.datasource.remote.BaseHttpResult
+import com.florizt.base_mvvm_lib.base.repository.datasource.entity.BaseResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -11,5 +11,5 @@ import retrofit2.http.Query
  */
 interface ITestRemoteService {
     @GET("get/remote")
-    suspend fun getAge(@Query("uid") uid: String): BaseHttpResult<Int>
+    suspend fun getAge(@Query("uid") uid: String): BaseResponse<Int>
 }

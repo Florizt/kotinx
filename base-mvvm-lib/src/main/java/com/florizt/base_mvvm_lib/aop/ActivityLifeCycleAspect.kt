@@ -22,6 +22,12 @@ import org.aspectj.lang.annotation.Aspect
  * 2021/7/23
  * 佛祖保佑       永无BUG
  */
+/**
+ * 对外开放的Activity生命周期
+ * 可通过在Application里实现 [com.florizt.base_mvvm_lib.base.BaseContract.IApplication]，重写其生命周期方法
+ * 但不建议这种，因为功能不分离，耦合性强
+ * 建议仿照 [BarAspect]，使用切面来处理
+ */
 @Aspect
 open class ActivityLifeCycleAspect {
     @After(onActivityCreate)

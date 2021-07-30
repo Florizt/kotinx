@@ -7,6 +7,10 @@ import android.content.Context
  * 2021/7/20
  * 佛祖保佑       永无BUG
  */
+/**
+ * 工厂方式获取[Localfit]
+ * 可通过koin进行注入
+ */
 object LocalfitFactory {
     fun <S> getService(context: Context, service: Class<S>): S {
         return getService(context, service, null)

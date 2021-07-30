@@ -14,6 +14,10 @@ import java.util.concurrent.TimeUnit
  * 2021/7/16
  * 佛祖保佑       永无BUG
  */
+/**
+ * 工厂方式获取[Retrofit]
+ * 可通过koin进行注入
+ */
 object RetrofitFactory {
 
     const val BASE_URL = "https://www.baidu.com/"

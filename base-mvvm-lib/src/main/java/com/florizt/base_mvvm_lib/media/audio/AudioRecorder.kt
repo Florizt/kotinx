@@ -18,6 +18,7 @@ import kotlin.collections.ArrayList
 
 /**
  * 用于实现录音、暂停、继续、停止、播放
+ * 支持录音分片、录音合并功能
  * Created by wuwei
  * 2021/7/28
  * 佛祖保佑       永无BUG

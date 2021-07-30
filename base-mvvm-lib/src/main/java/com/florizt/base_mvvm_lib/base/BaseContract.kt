@@ -17,8 +17,14 @@ import com.florizt.base_mvvm_lib.R
  * 2021/7/16
  * 佛祖保佑       永无BUG
  */
+/**
+ * 框架每一层的接口
+ */
 interface BaseContract {
 
+    /**
+     * 用于Application实现--开放生命周期、前后台、异常捕获
+     */
     interface IApplication {
         fun onActivityCreate(activity: Activity, savedInstanceState: Bundle?) {}
         fun onActivityNewIntent(activity: Activity, intent: Intent?) {}
@@ -41,6 +47,9 @@ interface BaseContract {
         fun crashOpera(ex: Throwable) {}
     }
 
+    /**
+     * 用于BaseActivity实现--布局层
+     */
     interface IView {
         fun initLayoutId(): Int
         fun initVariableId(): Int
@@ -50,6 +59,9 @@ interface BaseContract {
         fun initViewObservable()
     }
 
+    /**
+     * 用于BaseActivity实现--窗口层
+     */
     interface IWindow {
         /**
          * 是否拦截返回键
@@ -64,6 +76,9 @@ interface BaseContract {
         }
     }
 
+    /**
+     * 用于BaseActivity实现--状态栏、导航栏、软键盘等系统层
+     */
     interface IBar {
         /**
          * 是否开启沉浸式
@@ -122,9 +137,17 @@ interface BaseContract {
          */
         fun keyboardMode(): Int = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
 
+        /**
+         * 软键盘监听
+         * @param isPopup Boolean 是否弹起
+         * @param keyboardHeight Int 弹起高度
+         */
         fun onKeyboardChange(isPopup: Boolean, keyboardHeight: Int) {}
     }
 
+    /**
+     * 用于BaseViewModel实现--生命周期
+     */
     interface IViewModel : LifecycleObserver {
         @OnLifecycleEvent(Lifecycle.Event.ON_ANY)
         fun onAny(owner: LifecycleOwner?, event: Lifecycle.Event?) {

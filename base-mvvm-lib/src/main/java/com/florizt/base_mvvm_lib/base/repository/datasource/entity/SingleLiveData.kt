@@ -1,4 +1,4 @@
-package com.florizt.base_mvvm_lib.base.repository.datasource
+package com.florizt.base_mvvm_lib.base.repository.datasource.entity
 
 import android.util.Log
 import androidx.annotation.MainThread
@@ -12,6 +12,12 @@ import java.util.concurrent.atomic.AtomicBoolean
  * Created by wuwei
  * 2021/7/16
  * 佛祖保佑       永无BUG
+ */
+/**
+ * 防重复消息的LiveData
+ * @param T
+ * @property TAG String
+ * @property pending AtomicBoolean
  */
 open class SingleLiveData<T> : MutableLiveData<T> {
     private val TAG = "SingleLiveEvent"

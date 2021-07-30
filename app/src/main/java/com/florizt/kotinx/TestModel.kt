@@ -1,6 +1,6 @@
 package com.florizt.kotinx
 
-import com.florizt.base_mvvm_lib.base.repository.datasource.remote.Result
+import com.florizt.base_mvvm_lib.base.repository.datasource.entity.Result
 import com.florizt.base_mvvm_lib.base.repository.model.BaseModel
 
 /**
@@ -11,7 +11,11 @@ import com.florizt.base_mvvm_lib.base.repository.model.BaseModel
 class TestModel(private val remoteService: ITestRemoteService,private val localService: ITestLocalService) : BaseModel() {
 
     suspend fun getAge(): Result<Int> = callRequest {
-        handleResponse(remoteService.getAge("aaa"))
+        handleHttpResponse(remoteService.getAge("aaa"))
+    }
+
+    suspend fun setName(name: String): Result<Unit> = callRequest {
+        handleLocalResponse(localService.setName(name))
     }
 
     suspend fun getName(): Result<String> = callRequest {

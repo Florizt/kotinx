@@ -11,6 +11,13 @@ import java.util.*
  * 2021/7/23
  * 佛祖保佑       永无BUG
  */
+/**
+ * Activity堆栈管理类，包括应用进入前后台管理
+ * @property appCount Int
+ * @property runInBackground Boolean
+ * @property activityStack SoftReference<Stack<Activity>>
+ * @property fragmentStack SoftReference<Stack<Fragment>>
+ */
 class AppStackManager private constructor() {
     companion object {
         val instance: AppStackManager by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {

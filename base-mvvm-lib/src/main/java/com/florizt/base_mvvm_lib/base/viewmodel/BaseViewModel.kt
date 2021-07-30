@@ -4,8 +4,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import com.florizt.base_mvvm_lib.base.BaseContract
-import com.florizt.base_mvvm_lib.base.repository.datasource.MessageEvent
-import com.florizt.base_mvvm_lib.base.repository.datasource.SingleLiveData
+import com.florizt.base_mvvm_lib.base.repository.datasource.entity.MessageEvent
+import com.florizt.base_mvvm_lib.base.repository.datasource.entity.SingleLiveData
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
@@ -14,6 +14,10 @@ import org.greenrobot.eventbus.ThreadMode
  * Created by wuwei
  * 2021/7/16
  * 佛祖保佑       永无BUG
+ */
+/**
+ * 轻量的ViewModel基类
+ * @property uc UIChangeLiveData<Any>
  */
 abstract class BaseViewModel : ViewModel(), BaseContract.IViewModel {
 

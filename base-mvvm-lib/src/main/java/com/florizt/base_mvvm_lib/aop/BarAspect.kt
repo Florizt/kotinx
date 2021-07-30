@@ -14,6 +14,11 @@ import org.aspectj.lang.annotation.Aspect
  * 2021/7/22
  * 佛祖保佑       永无BUG
  */
+/**
+ * 对Activity生命周期进行切面
+ * 通过[ImmersionBar]进行应用状态栏、导航栏及软键盘处理
+ * 使用者可通过继承[BaseActivity]，重写[com.florizt.base_mvvm_lib.base.BaseContract.IBar]中的相关方法进行自定义
+ */
 @Aspect
 open class BarAspect {
     @After(onActivityStart)

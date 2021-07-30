@@ -16,6 +16,7 @@ import java.util.*
 
 
 /**
+ * 系统相机拍照、录像、裁剪功能
  * Created by wuwei
  * 2021/7/28
  * 佛祖保佑       永无BUG

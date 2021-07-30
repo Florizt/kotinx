@@ -1,6 +1,6 @@
 package com.florizt.kotinx
 
-import com.florizt.base_mvvm_lib.base.repository.datasource.remote.Result
+import com.florizt.base_mvvm_lib.base.repository.datasource.entity.Result
 
 /**
  * Created by wuwei
@@ -10,4 +10,5 @@ import com.florizt.base_mvvm_lib.base.repository.datasource.remote.Result
 class TestRepository(private val testModel: TestModel) {
     suspend fun getAge(): Result<Int> = testModel.getAge()
     suspend fun getName(): Result<String> = testModel.getName()
+    suspend fun setName(name: String): Result<Unit> = testModel.setName(name)
 }

@@ -3,9 +3,8 @@ package com.florizt.kotinx
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import com.florizt.base_mvvm_lib.base.repository.datasource.MessageEvent
-import com.florizt.base_mvvm_lib.base.repository.datasource.SingleLiveData
-import com.florizt.base_mvvm_lib.base.repository.datasource.remote.Result
+import com.florizt.base_mvvm_lib.base.repository.datasource.entity.MessageEvent
+import com.florizt.base_mvvm_lib.base.repository.datasource.entity.SingleLiveData
 import com.florizt.base_mvvm_lib.base.viewmodel.BaseViewModel
 import com.florizt.base_mvvm_lib.ext.IDLE
 import com.florizt.base_mvvm_lib.ext.launchUI
@@ -23,7 +22,10 @@ class TestViewModel(private val testRepository: TestRepository) : BaseViewModel(
         println("onAny $owner---$event")
     }
 
-    val test: SingleLiveData<String> = SingleLiveData("xxx")
+    val test: SingleLiveData<String> =
+        SingleLiveData(
+            "xxx"
+        )
 
     var status: ObservableInt = ObservableInt(IDLE)
 
@@ -33,13 +35,18 @@ class TestViewModel(private val testRepository: TestRepository) : BaseViewModel(
         println("onCreate")
         launchUI {
             launchWithIO {
-                val age = testRepository.getAge()
-                val name = testRepository.getName()
+                /*val age = testRepository.getAge()
                 if (age is Result.Success) {
-                    println("===${age.data}")
+
                 } else if (age is Result.Failed) {
 
-                }
+                }*/
+
+
+                val setName = testRepository.setName("王五")
+                println("111=TestViewModel==${setName}")
+                val getName = testRepository.getName()
+                println("222=TestViewModel==${getName}")
             }
         }
     }
@@ -49,13 +56,19 @@ class TestViewModel(private val testRepository: TestRepository) : BaseViewModel(
     }
 
     fun adapterTest() = {
-        println(">>>>>>>>>aspectj=111======：${status.get()}")
-        EventBus.getDefault().post(MessageEvent(1, 0))
-        if (status.get() == 4) {
+        test.value = "312iewskdsd"
+        println(">>>>>>>>>adapterTest=111======：${test.value}")
+        EventBus.getDefault().post(
+            MessageEvent(
+                1,
+                0
+            )
+        )
+        /*if (status.get() == 4) {
             status.set(0)
         } else {
             status.set(status.get() + 1)
-        }
+        }*/
     }
 
     fun reLoadData() = {

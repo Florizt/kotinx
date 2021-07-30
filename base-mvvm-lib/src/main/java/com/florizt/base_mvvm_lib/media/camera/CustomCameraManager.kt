@@ -28,7 +28,7 @@ import kotlin.collections.ArrayList
 
 /**
  * 自定义相机，可拍照、录制视频
- * 录制视频时支持分片录制
+ * 支持暂停录像、视频分片与视频合并功能
  * Created by wuwei
  * 2021/7/28
  * 佛祖保佑       永无BUG
