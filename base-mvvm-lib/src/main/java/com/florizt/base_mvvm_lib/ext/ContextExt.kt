@@ -16,15 +16,11 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.text.TextUtils
-import android.util.DisplayMetrics
 import android.view.View
-import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import java.io.*
-import java.lang.reflect.Method
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -34,6 +30,7 @@ import java.util.*
  * 佛祖保佑       永无BUG
  */
 
+//---------------------------------------------------软键盘start----------------------------------------------------
 fun Context.showSoftKeyboard(v: View) {
     val systemService = getSystemService(Context.INPUT_METHOD_SERVICE)
     if (systemService is InputMethodManager) {
@@ -47,7 +44,9 @@ fun Context.hiddenSoftKeyboard(v: View) {
         systemService.hideSoftInputFromWindow(v.windowToken, 0)
     }
 }
+//---------------------------------------------------软键盘end----------------------------------------------------
 
+//---------------------------------------------------string、color、dimen等资源start----------------------------------------------------
 fun Context.getString(id: Int): String = getString(id)
 
 fun Context.getString(id: Int, vararg formatArgs: Any?) = getString(id, formatArgs)
@@ -56,10 +55,23 @@ fun Context.getColor(id: Int): Int = resources.getColor(id)
 
 fun Context.getDimen(id: Int): Int = resources.getDimensionPixelOffset(id)
 
+fun Context.getDensity() = resources.displayMetrics.density
+
+fun Context.dp2px(dp: Float): Int = (dp * getDensity() + 0.5f).toInt()
+
+fun Context.px2dp(px: Int): Int = (px / getDensity() + 0.5f).toInt()
+
+fun Context.sp2px(sp: Float): Int = (sp * getDensity() + 0.5f).toInt()
+
+fun Context.px2sp(px: Float): Int = (px / getDensity() + 0.5f).toInt()
+//---------------------------------------------------string、color、dimen等资源end----------------------------------------------------
+
 @Synchronized
 fun Context.getSharedPreferences(): SharedPreferences =
     getSharedPreferences(packageName, Context.MODE_PRIVATE)
 
+
+//---------------------------------------------------assets、raw资源start----------------------------------------------------
 fun Context.getDrawable(id: Int, mutate: Boolean): Drawable {
     return if (mutate) {
         resources.getDrawable(id).mutate()
@@ -103,197 +115,64 @@ fun Context.readRaw(id: Int): List<String> {
     return list
 }
 
-fun Context.getDensity() = resources.displayMetrics.density
-
-fun Context.dp2px(dp: Float): Int = (dp * getDensity() + 0.5f).toInt()
-
-fun Context.px2dp(px: Int): Int = (px / getDensity() + 0.5f).toInt()
-
-fun Context.sp2px(sp: Float): Int = (sp * getDensity() + 0.5f).toInt()
-
-fun Context.px2sp(px: Float): Int = (px / getDensity() + 0.5f).toInt()
-
-fun Context.getScreenWidth(): Int {
-    val wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-    val metrics = DisplayMetrics()
-    wm.defaultDisplay.getRealMetrics(metrics)
-    return metrics.widthPixels
-}
-
-fun Context.getScreenHeight(): Int {
-    val wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-    val metrics = DisplayMetrics()
-    wm.defaultDisplay.getRealMetrics(metrics)
-    return metrics.heightPixels
-}
-
-fun Context.getStatusBarHeight(): Int {
-    var height = 0
-    height = if (hasNotchAtXiaomi()) {
-        val resourceId: Int = resources.getIdentifier("status_bar_height", "dimen", "android")
-        resources.getDimensionPixelSize(resourceId)
-    } else if (hasNotchAtHuawei()) {
-        getNotchSizeAtHuawei().get(1)
-    } else if (hasNotchAtVivo()) {
-        dp2px(27f)
-    } else if (hasNotchAtOPPO()) {
-        80
-    } else {
-        val resourceId: Int = resources.getIdentifier("status_bar_height", "dimen", "android")
-        resources.getDimensionPixelSize(resourceId)
-    }
-    return height
-}
-
-/**
- * 是否是小米刘海屏
- *
- * @return
- */
-fun Context.hasNotchAtXiaomi(): Boolean {
-    return try {
-        val intMethod: Method = Class.forName("android.os.SystemProperties")
-            .getMethod("getInt", String::class.java, Int::class.javaPrimitiveType)
-        val invoke = intMethod.invoke(null, "ro.miui.notch", 0) as Int
-        invoke == 1
-    } catch (e: Exception) {
-        false
+fun Context.assetsToFile(assetName: String): File? {
+    val file: File? = createFile(TYPE_DOWNLOAD, assetName, null);
+    return file?.also {
+        val ins = assets.open(assetName)
+        val fos = FileOutputStream(it)
+        val buffer = ByteArray(1024)
+        var length = 0
+        while (ins.read(buffer).let {
+                length = it
+                length
+            } > 0) {
+            fos.write(buffer, 0, length)
+        }
+        fos.flush();
+        ins.close();
+        fos.close();
     }
 }
-
-/**
- * 是否是华为刘海屏
- *
- * @param context
- * @return
- */
-fun Context.hasNotchAtHuawei(): Boolean {
-    return try {
-        val classLoader = classLoader
-        val HwNotchSizeUtil =
-            classLoader.loadClass("com.huawei.android.util.HwNotchSizeUtil")
-        val get: Method = HwNotchSizeUtil.getMethod("hasNotchInScreen")
-        get.invoke(HwNotchSizeUtil) as Boolean
-    } catch (e: Exception) {
-        false
-    }
-}
-
-/**
- * 华为获取刘海尺寸：width、height
- * int[0]值为刘海宽度 int[1]值为刘海高度
- *
- * @param context
- * @return
- */
-fun Context.getNotchSizeAtHuawei(): IntArray {
-    return try {
-        val cl = classLoader
-        val HwNotchSizeUtil =
-            cl.loadClass("com.huawei.android.util.HwNotchSizeUtil")
-        val get: Method = HwNotchSizeUtil.getMethod("getNotchSize")
-        get.invoke(HwNotchSizeUtil) as IntArray
-    } catch (e: Exception) {
-        intArrayOf(0, 0)
-    }
-}
-
-/**
- * 是否是vivo刘海屏
- *
- * @param context
- * @return
- */
-fun Context.hasNotchAtVivo(): Boolean {
-    return try {
-        val classLoader = classLoader
-        val FtFeature = classLoader.loadClass("android.util.FtFeature")
-        val method: Method = FtFeature.getMethod("isFeatureSupport", Int::class.javaPrimitiveType)
-        method.invoke(FtFeature, 0x00000020) as Boolean
-    } catch (e: Exception) {
-        false
-    }
-}
-
-/**
- * 是否是oppo刘海屏
- *
- * @param context
- * @return
- */
-fun Context.hasNotchAtOPPO(): Boolean {
-    return packageManager.hasSystemFeature("com.oppo.feature.screen.heteromorphism")
-}
+//---------------------------------------------------assets、raw资源end----------------------------------------------------
 
 
+//---------------------------------------------------文件系统start----------------------------------------------------
 const val TYPE_IMAGE = 1
 const val TYPE_VIDEO = 2
 const val TYPE_AUDIO = 3
 const val TYPE_DOWNLOAD = 4
 const val TYPE_DOCUMENT = 5
 
-const val POST_IMAGE = ".jpeg"
-const val POST_VIDEO = ".mp4"
-const val POST_AUDIO = ".mp3"
-
+/**
+ *
+ * @receiver Context
+ * @param type Int
+ * @param fileName String 必须是包含后缀的完整文件名
+ * @param subFolder String?
+ * @return File?
+ */
 fun Context.createFile(
     type: Int,
     fileName: String,
-    format: String?,
-    sub: String
+    subFolder: String?
 ): File? {
-    var fileName = fileName
-    var sub = sub
     if (TextUtils.isEmpty(fileName)) {
-        fileName = SimpleDateFormat("yyyyMMddhhmmss", Locale.CHINA).format(Date())
+        throw java.lang.IllegalArgumentException("filename must not be null")
     }
-    if (sub.startsWith("/") && sub.length > 1) {
-        sub = sub.substring(1, sub.length)
-    }
-    var tmpFile: File? = null
-    val suffixType: String
-    val hasFormat =
-        fileName.lastIndexOf(".") > 0 && fileName.lastIndexOf(".") + 1 < fileName.length
-    try {
-        when (type) {
-            TYPE_VIDEO -> tmpFile = File(
-                createDir(type, sub),
-                if (hasFormat) fileName else fileName + POST_VIDEO
-            )
-            TYPE_AUDIO -> tmpFile = File(
-                createDir(type, sub),
-                if (hasFormat) fileName else fileName + POST_AUDIO
-            )
-            TYPE_IMAGE -> tmpFile = File(
-                createDir(type, sub),
-                if (hasFormat) fileName else fileName + POST_IMAGE
-            )
-            TYPE_DOWNLOAD -> {
-                suffixType = if (TextUtils.isEmpty(format)) POST_IMAGE else format!!
-                tmpFile = File(
-                    createDir(type, sub),
-                    if (hasFormat) fileName else fileName + suffixType
-                )
-            }
-            else -> {
-                suffixType = if (TextUtils.isEmpty(format)) POST_IMAGE else format!!
-                tmpFile = File(
-                    createDir(type, sub),
-                    if (hasFormat) fileName else fileName + suffixType
-                )
-            }
+    val tmpFile: File? = File(createDir(type, subFolder), fileName)
+    return tmpFile?.also {
+        if (!it.exists()) {
+            it.createNewFile()
         }
-        if (tmpFile != null && !tmpFile.exists() && tmpFile.createNewFile()) {
-        }
-    } catch (e: Exception) {
     }
-    return tmpFile
 }
 
-fun Context.createDir(type: Int, sub: String): File? {
-    var sub = sub
-    if (sub.startsWith("/") && sub.length > 1) {
+fun Context.createDir(type: Int, subFolder: String?): File? {
+    var sub = subFolder
+    if (sub != null && sub.startsWith("/") && sub.length > 1) {
         sub = sub.substring(1, sub.length)
+    } else {
+        sub = ""
     }
     val rootDir: File?
     rootDir = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -302,17 +181,22 @@ fun Context.createDir(type: Int, sub: String): File? {
         val state: String = Environment.getExternalStorageState()
         if (state == Environment.MEDIA_MOUNTED) Environment.getExternalStorageDirectory() else cacheDir
     }
-    if (rootDir != null && !rootDir.exists() && rootDir.mkdirs()) {
+    return rootDir?.also {
+        if (!it.exists()) {
+            it.mkdirs()
+        }
+    }?.let {
+        File(
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+                it.getAbsolutePath().toString() + "/" + sub
+            else
+                it.getAbsolutePath().toString() + getParentPath(type, sub)
+        )
+    }?.also {
+        if (!it.exists()) {
+            it.mkdirs()
+        }
     }
-    val folderDir = File(
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-            rootDir?.getAbsolutePath().toString() + "/" + sub
-        else
-            rootDir?.getAbsolutePath().toString() + getParentPath(type, sub)
-    )
-    if (folderDir != null && !folderDir.exists() && folderDir.mkdirs()) {
-    }
-    return folderDir
 }
 
 fun Context.getRootDirFile(type: Int): File? {
@@ -328,11 +212,13 @@ fun Context.getRootDirFile(type: Int): File? {
 
 fun Context.getParentPath(
     type: Int,
-    sub: String
+    subFolder: String?
 ): String {
-    var sub = sub
-    if (sub.startsWith("/") && sub.length > 1) {
+    var sub = subFolder
+    if (sub != null && sub.startsWith("/") && sub.length > 1) {
         sub = sub.substring(1, sub.length)
+    } else {
+        sub = ""
     }
     return when (type) {
         TYPE_VIDEO -> "/" + packageName + "/video/" + sub
@@ -365,7 +251,10 @@ fun Context.saveFile(
         e.printStackTrace()
     }
 }
+//---------------------------------------------------文件系统end----------------------------------------------------
 
+
+//---------------------------------------------------Uri适配start----------------------------------------------------
 @SuppressLint("NewApi")
 fun Context.uriToPath(uri: Uri): String? {
     val context = applicationContext
@@ -516,3 +405,4 @@ fun Context.getDataColumn(
     }
     return ""
 }
+//---------------------------------------------------Uri适配end----------------------------------------------------

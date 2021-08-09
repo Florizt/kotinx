@@ -1,13 +1,47 @@
 package com.florizt.base_mvvm_lib.ext
 
 import java.io.*
+import java.math.BigInteger
+import java.nio.MappedByteBuffer
+import java.nio.channels.FileChannel
+import java.security.MessageDigest
 import java.text.DecimalFormat
+import java.util.*
 
 /**
  * Created by wuwei
  * 2021/7/22
  * 佛祖保佑       永无BUG
  */
+/**
+ * 获取文件的md5
+ * @receiver File
+ * @return String?
+ */
+fun File.toMD5(): String? {
+    var value: String? = null
+    var `in`: FileInputStream? = null
+    try {
+        `in` = FileInputStream(this)
+        val byteBuffer: MappedByteBuffer =
+            `in`.channel.map(FileChannel.MapMode.READ_ONLY, 0, length())
+        val md5: MessageDigest = MessageDigest.getInstance("MD5")
+        md5.update(byteBuffer)
+        val bi = BigInteger(1, md5.digest())
+        value = bi.toString(16).toUpperCase(Locale.ENGLISH) //转为大写
+    } catch (e: java.lang.Exception) {
+        e.printStackTrace()
+    } finally {
+        if (null != `in`) {
+            try {
+                `in`.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+    }
+    return value
+}
 
 fun File.copyFile(newFile: File) {
     return try {
@@ -42,7 +76,10 @@ fun File.file2Byte(): ByteArray? {
             byte_size
         )
         var length: Int = 0
-        while (fileInputStream.read(b).also({ length = it }) != -1) {
+        while (fileInputStream.read(b).let {
+                length = it
+                length
+            } != -1) {
             outputStream.write(b, 0, length)
         }
         fileInputStream.close()

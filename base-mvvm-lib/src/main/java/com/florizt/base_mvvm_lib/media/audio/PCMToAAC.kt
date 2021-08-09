@@ -56,7 +56,7 @@ object PCMToAAC {
             outputStream = ByteArrayOutputStream()
             out = BufferedOutputStream(FileOutputStream(aacPath, false))
             val buffer = ByteArray(1024)
-            while (inputStream.read(buffer) !== -1) {
+            while (inputStream.read(buffer) != -1) {
                 dstAudioFormatFromPCM(buffer, out, mediaCodec)
                 Log.e("wqs+readInputStream", "readInputStream: $buffer")
             }

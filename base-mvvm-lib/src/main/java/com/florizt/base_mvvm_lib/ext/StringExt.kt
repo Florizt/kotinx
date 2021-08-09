@@ -1,7 +1,6 @@
 package com.florizt.base_mvvm_lib.ext
 
 import android.util.Base64
-import java.nio.charset.Charset
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import javax.crypto.Cipher
@@ -21,21 +20,17 @@ import javax.crypto.spec.SecretKeySpec
  * @return
  * @throws Exception
  */
-val CHARSET: Charset = charset("UTF-8")
-
-const val ALGORITHM_3DES: String = "DESede"
-const val ALGORITHM_MD5: String = "MD5"
 
 @Throws(Exception::class)
 fun String.encrypt3DES(psw: String): String? { // 恢复密钥
-    val secretKey: SecretKey = SecretKeySpec(build3Deskey(psw.toByteArray()), ALGORITHM_3DES)
+    val secretKey: SecretKey = SecretKeySpec(build3Deskey(psw.toByteArray()), "DESede")
     // Cipher完成加密
-    val cipher: Cipher = Cipher.getInstance(ALGORITHM_3DES)
+    val cipher: Cipher = Cipher.getInstance("DESede")
     // cipher初始化
     cipher.init(Cipher.ENCRYPT_MODE, secretKey)
     val encrypt: ByteArray = cipher.doFinal(toByteArray())
     //转码
-    return String(Base64.encode(encrypt, Base64.DEFAULT), CHARSET)
+    return String(Base64.encode(encrypt, Base64.DEFAULT), charset("UTF-8"))
 }
 
 /**
@@ -47,17 +42,17 @@ fun String.encrypt3DES(psw: String): String? { // 恢复密钥
  */
 @Throws(Exception::class)
 fun String.decrypt3DES(psw: String): String? { // 恢复密钥
-    val secretKey: SecretKey = SecretKeySpec(build3Deskey(psw.toByteArray()), ALGORITHM_3DES)
+    val secretKey: SecretKey = SecretKeySpec(build3Deskey(psw.toByteArray()), "DESede")
     // Cipher完成解密
-    val cipher: Cipher = Cipher.getInstance(ALGORITHM_3DES)
+    val cipher: Cipher = Cipher.getInstance("DESede")
     // 初始化cipher
     cipher.init(Cipher.DECRYPT_MODE, secretKey)
     //转码
-    val bytes: ByteArray = Base64.decode(toByteArray(CHARSET), Base64.DEFAULT)
+    val bytes: ByteArray = Base64.decode(toByteArray(charset("UTF-8")), Base64.DEFAULT)
     //解密
     val plain: ByteArray = cipher.doFinal(bytes)
     //解密结果转码
-    return String(plain, CHARSET)
+    return String(plain, charset("UTF-8"))
 }
 
 @Throws(Exception::class)
@@ -73,7 +68,7 @@ private fun build3Deskey(temp: ByteArray): ByteArray? {
 
 @Throws(NoSuchAlgorithmException::class)
 fun String.toMD5(): String? { //获取摘要器 MessageDigest
-    val messageDigest: MessageDigest = MessageDigest.getInstance(ALGORITHM_MD5)
+    val messageDigest: MessageDigest = MessageDigest.getInstance("MD5")
     //通过摘要器对字符串的二进制字节数组进行hash计算
     val digest: ByteArray = messageDigest.digest(toByteArray())
     val sb = java.lang.StringBuilder()
